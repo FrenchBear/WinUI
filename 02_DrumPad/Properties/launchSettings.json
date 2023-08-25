@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "02_DrumPad (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "02_DrumPad (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

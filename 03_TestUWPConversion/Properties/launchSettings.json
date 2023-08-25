@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "03_TestUWPConversion (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "03_TestUWPConversion (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

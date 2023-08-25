@@ -32,7 +32,7 @@
 
         <TextBlock Grid.Row="0" Grid.Column="0" Name="TextBlock1" VerticalAlignment="Center" HorizontalAlignment="Center">Word</TextBlock>
         <TextBlock Grid.Row="0" Grid.Column="1" Name="PlacedTextBlock" VerticalAlignment="Center" HorizontalAlignment="Center">Placed</TextBlock>
-        <Button Grid.Row="0" Grid.Column="2" Height="33" HorizontalAlignment="Center" Name="ClearButton" VerticalAlignment="Center" Width="75" Click="ClearButton_Click" AccessKey="C">Clear</Button>
+        <Button Grid.Row="0" Content="Clear" Grid.Column="2" Height="33" HorizontalAlignment="Center" Name="ClearButton" VerticalAlignment="Center" Width="75" Click="ClearButton_Click" AccessKey="C" />
 
         <TextBox Grid.Row="1" Grid.Column="0" Name="Word1TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12" />
         <TextBox Grid.Row="2" Grid.Column="0" Name="Word2TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12" />
