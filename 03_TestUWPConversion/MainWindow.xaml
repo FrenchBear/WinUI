@@ -130,15 +130,22 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Characters (UTF-16 units)"  Margin="0,0,6,0" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CharactersCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CharactersCount}" Margin="0,0,6,0" HorizontalAlignment="Right" />
             <TextBlock Grid.Row="1" Text="Codepoints (Unicode units)"  Margin="0,0,6,0" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CodepointsCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CodepointsCount}" Margin="0,0,6,0" HorizontalAlignment="Right" />
             <TextBlock Grid.Row="2" Text="Glyphs (Visual units)"  Margin="0,0,6,0" />
-            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GlyphsCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GlyphsCount}" Margin="0,0,6,0" HorizontalAlignment="Right" />
         </Grid>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Codepoints" VerticalAlignment="Top" FontWeight="SemiBold" />
-        <ListView Name="CodepointsList" Grid.Row="4" Grid.Column="1" SelectionMode="Extended" SelectionChanged="CodepointsList_SelectionChanged" ItemsSource="{Binding CodepointsCollection}">
+        <ListView Name="CodepointsList" Grid.Row="4" Grid.Column="1" SelectionMode="Extended" SelectionChanged="CodepointsList_SelectionChanged" ItemsSource="{Binding CodepointsCollection}" >
+            <ListView.Resources>
+                <!-- Selection color -->
+                <!-- https://stackoverflow.com/questions/32302146/how-to-change-highlight-color-of-the-selected-listview-item-in-uwp-windows-10 -->
+                <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#0000FF" />
+                <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="SteelBlue" />
+            </ListView.Resources>
+
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Height" Value="20" />

@@ -3,6 +3,7 @@
 //
 // 2023-08-25   PV
 
+using Windows.UI.Popups;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,15 +24,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas;
 using System.Threading.Tasks;
-using  UniDataNS;
+using UniDataNS;
+using Microsoft.UI.Windowing;
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable IDE0051 // Remove unused private members
 
 namespace WinUI03_TestUWPConversion;
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
 public sealed partial class MainWindow: Window
 {
@@ -40,8 +45,20 @@ public sealed partial class MainWindow: Window
     private bool IgnoreTextSelectionChanged;
     private string Transformed = string.Empty;
 
+    private IntPtr hWnd;
+    private Microsoft.UI.WindowId windowId;
+
     public MainWindow()
     {
+        // Control initial window size
+        // https://stackoverflow.com/questions/67169712/winui-3-0-reunion-0-5-window-size
+        hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+        var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+        appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1024, Height = 800 });
+        //var presenter = appWindow.Presenter as OverlappedPresenter;
+        //presenter.IsModal = true;
+
         InitializeComponent();
         VM = new ViewModel();
         MainGrid.DataContext = VM;
@@ -89,16 +106,15 @@ public sealed partial class MainWindow: Window
         VM.SamplesCollection.Add(new TextSample("Whole-script confusable", "scope ѕсоре"));     // Full Cyrillic for 2nd form
     }
 
-    // Can't use Window.Current.Close(): Error 'Closing main window is not allowed.'
-    // Instead terminate app forcefully
-    private void CloseButton_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
+    // Brute force: Application.Current.Exit() [CoreApplication.Exit() does nothing ???]
+    private void CloseButton_Click(object sender, RoutedEventArgs e) => Application.Current.Exit();   // Close();
 
     private async void AboutButton_Click(object sender, RoutedEventArgs e) => await DoAbout();
 
-    private async static Task DoAbout()
+    private async Task DoAbout()
     {
         var myAssembly = Assembly.GetExecutingAssembly();
-        var aTitleAttr = (AssemblyTitleAttribute ?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
+        var aTitleAttr = (AssemblyTitleAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
         string sAssemblyVersion = myAssembly.GetName().Version?.Major.ToString() + "." + myAssembly.GetName().Version?.Minor.ToString() + "." + myAssembly.GetName().Version?.Build.ToString();
         var aDescAttr = (AssemblyDescriptionAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
         var aCopyrightAttr = (AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));
@@ -107,9 +123,28 @@ public sealed partial class MainWindow: Window
         string s = aTitleAttr?.Title + " version " + sAssemblyVersion + "\r\n" + aDescAttr?.Description + "\r\n\n" + aProductAttr?.Product + "\r\n" + aCopyrightAttr?.Copyright;
         s += "\n\nUnicode Data: " + UniData.GetUnicodeVersion();
 
+        // Old style
+        /*
         var dialog = new MessageDialog(s, "About " + aTitleAttr?.Title);
-        // Doesn't work with WinUI
+        dialog.Commands.Add(new UICommand("Ok", new UICommandInvokedHandler(command => { })));
+        dialog.DefaultCommandIndex = 0;
+        dialog.CancelCommandIndex = 0;
+
+        // https://stackoverflow.com/questions/68112320/system-runtime-interopservices-comexception-on-messagedialog-winui3
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        WinRT.Interop.InitializeWithWindow.Initialize(dialog, hwnd);
         await dialog.ShowAsync();
+        */
+
+        var cdialog = new ContentDialog
+        {
+            Title = "About " + aTitleAttr?.Title,
+            Content = s,
+            CloseButtonText = "OK",
+            // https://stackoverflow.com/questions/68017976/system-argumentexception-value-does-not-fall-within-the-expected-range-on-co
+            XamlRoot = Content.XamlRoot,
+        };
+        await cdialog.ShowAsync();
     }
 
     private void CopyButton_Click(object sender, RoutedEventArgs e) => DoCopy();
@@ -525,11 +560,26 @@ public sealed partial class MainWindow: Window
 
     private async void SearchButton_Click(object sender, RoutedEventArgs e)
     {
-        //using var sw = new SearchDialog();
-        //await sw.ShowAsync();
-        //string? res = sw.GetChar();
-        //if (res != null)
-        //    InputText.SelectedText = res;
+        var sw = new SearchWindow();
+        sw.Activate();
+
+        //var hWndSW = WinRT.Interop.WindowNative.GetWindowHandle(sw);
+        //var windowIdSW = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndSW);
+        ////var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+        //var presenter = OverlappedPresenter.Create();
+        //presenter.IsModal = true;
+
+        //var appWindow = AppWindow.Create(presenter, windowId);
+        //appWindow.Show();
+
+        //// Modal:
+        //// https://learn.microsoft.com/en-us/answers/questions/910658/(winui3)how-to-show-a-model-window
+        ////sw.Activate();
+
+        string? res = sw.GetChar();
+        if (res != null)
+            InputText.SelectedText = res;
     }
 }
 
