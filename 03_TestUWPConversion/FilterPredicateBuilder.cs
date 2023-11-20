@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace WinUI03_TestUWPConversion;
+namespace UniView_WinUI3;
 
 internal class FilterPredicateBuilder
 {

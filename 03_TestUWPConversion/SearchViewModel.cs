@@ -9,14 +9,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UniDataNS;
-using Windows.UI.Xaml.Data;
-using static WinUI03_TestUWPConversion.CurrentSearchOptions;
+using static UniView_WinUI3.CurrentSearchOptions;
 
-namespace WinUI03_TestUWPConversion;
+namespace UniView_WinUI3;
 
 class SearchViewModel: INotifyPropertyChanged
 {
-    //private readonly SearchWindow Window;
+    //private readonly SearchWindow W;
 
     // Avoid event loops on ceckboxes groups
     public bool IgnoreClick;
@@ -274,7 +273,8 @@ class SearchViewModel: INotifyPropertyChanged
 
     protected void SetOptionProperty(ref bool? field, bool? newValue, [CallerMemberName] string propertyName = "?")
     {
-        if (!WindowLoaded) return;
+        if (!WindowLoaded)
+            return;
         if (field != newValue)
         {
             field = newValue;
@@ -283,12 +283,24 @@ class SearchViewModel: INotifyPropertyChanged
         }
     }
 
+    // No need to call ApplyFilter for OutputProperty
+    protected void SetOutputProperty(ref bool? field, bool? newValue, [CallerMemberName] string propertyName = "?")
+    {
+        if (!WindowLoaded)
+            return;
+        if (field != newValue)
+        {
+            field = newValue;
+            NotifyPropertyChanged(propertyName);
+        }
+    }
+
     // Options
-    public bool? OutputName { get => outputName; set => SetOptionProperty(ref outputName, value); }
+    public bool? OutputName { get => outputName; set => SetOutputProperty(ref outputName, value); }
 
-    public bool? OutputCharacters { get => outputCharacters; set => SetOptionProperty(ref outputCharacters, value); }
+    public bool? OutputCharacters { get => outputCharacters; set => SetOutputProperty(ref outputCharacters, value); }
 
-    public bool? OutputCodepoints { get => outputCodepoints; set => SetOptionProperty(ref outputCodepoints, value); }
+    public bool? OutputCodepoints { get => outputCodepoints; set => SetOutputProperty(ref outputCodepoints, value); }
 
     // Source Symbols
     public bool? SymbolNone { get => symbolNone; set => SetOptionProperty(ref symbolNone, value); }

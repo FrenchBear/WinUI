@@ -1,41 +1,31 @@
-﻿// WinUI03_TestUWPConversion
+﻿// UniView_WinUI3
 // Test project to try UWP -> WinUI conversion, using Uniview project as a basis
 //
 // 2023-08-25   PV
 
-using Windows.UI.Popups;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas;
 using System.Threading.Tasks;
 using UniDataNS;
-using Microsoft.UI.Windowing;
+using static UniView_WinUI3.NativeMethods;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace WinUI03_TestUWPConversion;
+namespace UniView_WinUI3;
 #pragma warning restore IDE0079 // Remove unnecessary suppression
 
 public sealed partial class MainWindow: Window
@@ -45,19 +35,22 @@ public sealed partial class MainWindow: Window
     private bool IgnoreTextSelectionChanged;
     private string Transformed = string.Empty;
 
-    private IntPtr hWnd;
-    private Microsoft.UI.WindowId windowId;
-
     public MainWindow()
     {
-        // Control initial window size
+        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+
+        // Control initial window size (C'est déjà n'importe quoi)
         // https://stackoverflow.com/questions/67169712/winui-3-0-reunion-0-5-window-size
-        hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-        windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
         appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1024, Height = 800 });
-        //var presenter = appWindow.Presenter as OverlappedPresenter;
-        //presenter.IsModal = true;
+        appWindow.Title = "UniView WinUI3";
+
+        // Set Main Window Icon (Là c'est du délire total...)
+        // https://learn.microsoft.com/en-us/answers/questions/822928/app-icon-windows-app-sdk
+        string sExe = Environment.ProcessPath!;
+        System.Drawing.Icon ico = System.Drawing.Icon.ExtractAssociatedIcon(sExe)!;
+        _ = SendMessage(hWnd, WM_SETICON, ICON_BIG, ico.Handle);
 
         InitializeComponent();
         VM = new ViewModel();
@@ -561,25 +554,14 @@ public sealed partial class MainWindow: Window
     private async void SearchButton_Click(object sender, RoutedEventArgs e)
     {
         var sw = new SearchWindow();
-        sw.Activate();
-
-        //var hWndSW = WinRT.Interop.WindowNative.GetWindowHandle(sw);
-        //var windowIdSW = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndSW);
-        ////var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-
-        //var presenter = OverlappedPresenter.Create();
-        //presenter.IsModal = true;
-
-        //var appWindow = AppWindow.Create(presenter, windowId);
-        //appWindow.Show();
-
-        //// Modal:
-        //// https://learn.microsoft.com/en-us/answers/questions/910658/(winui3)how-to-show-a-model-window
-        ////sw.Activate();
-
-        string? res = sw.GetChar();
-        if (res != null)
-            InputText.SelectedText = res;
+        sw.XamlRoot = Content.XamlRoot;     // Actually, this.Content.XamlRoot
+        var result = await sw.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            string? res = sw.GetChar();
+            if (res != null)
+                InputText.SelectedText = res;
+        }
     }
 }
 

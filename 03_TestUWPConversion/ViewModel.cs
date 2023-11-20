@@ -8,7 +8,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-namespace WinUI03_TestUWPConversion;
+
+namespace UniView_WinUI3;
 
 // No need to support INotifyPropertyChanged since we won't update SourceText from code except at the very beginning
 // so we call Transform manually in this case

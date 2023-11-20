@@ -4,7 +4,8 @@
 // 2023-008-18  PV
 
 using System.Collections.Generic;
-namespace WinUI03_TestUWPConversion;
+
+namespace UniView_WinUI3;
 
 internal static class CurrentSearchOptions
 {
@@ -42,5 +43,4 @@ internal static class CurrentSearchOptions
         { "Hair", true },
         { "Other", true },
     };
-
 }

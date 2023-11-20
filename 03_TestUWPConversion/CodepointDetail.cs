@@ -6,10 +6,11 @@
 // 2020-12-14   PV      1.5.3: ToDisplayString
 // 2020-12-30   PV      1.6.0: Scripts and UniData refactoring
 // 2023-01-23   PV      C#11
-using System.ComponentModel;
+
+using System.ComponentModel;
 using UniDataNS;
 
-namespace WinUI03_TestUWPConversion;
+namespace UniView_WinUI3;
 
 /// <summary>
 /// Detailed info about a Codepoint (Unicode unit) after grouping suggogates and processing regex macros

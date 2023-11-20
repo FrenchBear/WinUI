@@ -23,7 +23,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-namespace UniDataNS;
+
+namespace UniDataNS;
 
 public static class UniData
 {

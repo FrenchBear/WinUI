@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "03_TestUWPConversion (Package)": {
+    "UniView_WinUI3 (Package)": {
       "commandName": "MsixPackage"
     },
-    "03_TestUWPConversion (Unpackaged)": {
+    "UniView_WinUI3 (Unpackaged)": {
       "commandName": "Project"
     }
   }

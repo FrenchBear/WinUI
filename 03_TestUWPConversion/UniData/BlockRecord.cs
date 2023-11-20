@@ -4,7 +4,8 @@
 // Rank value is useful for UniSearch, but not here: we just use blocks for filtering scripts/symbols, Latin+Greek/All scripts
 //
 // 2023-08-17   PV      Copied from UniSearch
-namespace UniDataNS;
+
+namespace UniDataNS;
 
 /// <summary>
 /// Represent an Unicode block (range of codepoints) and its hierarchical classification
