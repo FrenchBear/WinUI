@@ -1,0 +1,23 @@
+﻿// NativeMethods.txt for BasicInterop
+// Used by Nuget CsWin32 to generate PInvoke class
+// See https://github.com/microsoft/CsWin32?tab=readme-ov-file#readme
+//
+// 2024-12-12	PV
+
+HWND
+HWND_TOP
+
+GetDpiForWindow
+GetWindowLong
+SetWindowLong
+SetWindowPos
+
+SET_WINDOW_POS_FLAGS
+//SWP_NOMOVE
+
+WINDOW_LONG_PTR_INDEX
+//GWL_STYLE
+
+WINDOW_STYLE
+//WS_MINIMIZEBOX
+//WS_MAXIMIZEBOX

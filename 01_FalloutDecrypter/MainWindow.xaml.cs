@@ -4,12 +4,15 @@
 //
 // 2023-01-25   PV
 // 2023-08-25   PV      Restart playing with WinUI 3
+// 2024-12-12   PV      Now dpi-aware so Window resize is correct
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 #pragma warning disable IDE0051 // Remove unused private members
 
@@ -20,6 +23,11 @@ namespace WinUI3First;
 
 public sealed partial class MainWindow: Window
 {
+    [DllImport("USER32.dll", ExactSpelling = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [SupportedOSPlatform("windows10.0.14393")]
+    internal static extern uint GetDpiForWindow(IntPtr hwnd);
+
     public MainWindow()
     {
         InitializeComponent();
@@ -28,9 +36,15 @@ public sealed partial class MainWindow: Window
         // Resize window
         // https://stackoverflow.com/questions/67169712/winui-3-0-reunion-0-5-window-size
         IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+        var dpi = GetDpiForWindow(hWnd);
+        float scalingFactor = (float)dpi / 96;
+        int width = (int)(340 * scalingFactor);
+        int height = (int)(300 * scalingFactor);
+
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-        appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 340, Height = 300 });
+        appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = width, Height = height });
 
         AnalysisTextBlock.Text = "Enter first word";
     }
